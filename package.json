@@ -1,7 +1,7 @@
 {
     "name": "fabcom",
     "version": "1.0.0",
-    "description": "Authentication and Authorization service",
+    "description": "Authentication and Authorization service for FABCOM",
     "main": "index.js",
     "scripts": {
         "build": "tsc && npm uninstall typescript @types/* del-cli",
