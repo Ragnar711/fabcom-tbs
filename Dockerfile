@@ -1,27 +1,29 @@
-# Compilation stage
-FROM node:22-alpine as ts-compiler
+FROM node:lts as ts-compiler
 
 WORKDIR /app
+
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY prisma ./prisma
+COPY .env ./
+
+RUN apt-get -qy update && apt-get -qy install openssl
 
 RUN npm install
+
+RUN npm install @prisma/client
+
 COPY . ./
+
+RUN npx prisma generate --schema ./prisma/schema.prisma
+
 RUN npm run build
 
-# Cleaning stage
-FROM node:22-alpine
+FROM node:lts
 
 WORKDIR /app
-COPY --from=ts-compiler /app/package*.json ./
-COPY --from=ts-compiler /app/dist ./dist
-RUN npm install --omit=dev
 
-# ADD prisma schema before running npx prisma generate
-COPY prisma/schema.prisma ./prisma/schema.prisma
-RUN npx prisma generate
+COPY --from=ts-compiler /app ./
+COPY .env ./
 
-EXPOSE 3000
-
-CMD ["npm", "start"]
-
+CMD ["npm", "run", "start"]
