@@ -2,12 +2,13 @@ import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import dotenv from 'dotenv';
-import router from './routes/User';
+import dechet_routes from './routes/Dechet';
+import nc_routes from './routes/NC';
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT ?? 3000;
+const port = process.env.PORT ?? 3001;
 
 app.use(helmet());
 app.use(compression());
@@ -15,7 +16,8 @@ app.use(express.json());
 
 app.disable('x-powered-by');
 
-app.use('/api/v1', router);
+app.use('/api/v1/dechet', dechet_routes);
+app.use('/api/v1/nc', nc_routes);
 
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 app.use((_req: Request, res: Response, _next: NextFunction) => {

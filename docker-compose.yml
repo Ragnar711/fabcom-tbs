@@ -4,7 +4,7 @@ services:
         image: mysql:latest
         restart: always
         environment:
-            MYSQL_DATABASE: 'fabcom'
+            MYSQL_DATABASE: 'tbs'
             MYSQL_USER: 'user'
             MYSQL_PASSWORD: 'password'
             MYSQL_ROOT_PASSWORD: 'password'
@@ -16,12 +16,12 @@ services:
             retries: 10
 
     auth:
-        image: registry.gitlab.com/aracompany/fabcom/auth:v1.0
+        image: registry.gitlab.com/aracompany/fabcom/tbs:master
         restart: always
         environment:
             NODE_ENV: 'production'
             PORT: '3000'
-            DATABASE_URL: 'mysql://root:password@db/fabcom'
+            DATABASE_URL: 'mysql://root:password@db/tbs'
             JWT_SECRET: 'secret'
         ports:
             - '127.0.0.1:3000:3000'

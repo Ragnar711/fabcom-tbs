@@ -8,19 +8,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Utilisateur {
-  id         Int      @id @default(autoincrement())
-  nom        String
-  prenom     String
-  matricule  String   @unique
-  motDePasse String
-  role       Role     @default(USER)
-  image      String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model Historique {
+  Id      Int      @id @default(autoincrement())
+  Date    DateTime @default(now())
+  Poste   Poste
+  Of      String?
+  QP      Int      @default(0)
+  TQ      Float    @default(0)
+  TP      Float    @default(0)
+  TD      Float    @default(0)
+  TQ_AVG  Float    @default(0)
+  TP_AVG  Float    @default(0)
+  TD_AVG  Float    @default(0)
+  TQ_D    Int      @default(1)
+  TP_D    Int      @default(1)
+  TD_D    Int      @default(1)
+  Cadence Float
 }
 
-enum Role {
-  ADMIN
-  USER
+model Arret {
+  Id         Int       @id @default(autoincrement())
+  Date_Debut DateTime  @default(now())
+  Date_Fin   DateTime?
+  Poste      Poste
+  Of         String?
+  Cause      String?
+  Operateur  String?
+}
+
+model OrdreFabrication {
+  Id                Int      @id @default(autoincrement())
+  Numero            String
+  Article           String
+  Quantite_Objectif Int      @default(0)
+  Of_Prod           Boolean  @default(false)
+  Cadence           Int      @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @default(now())
+}
+
+model NonConforme {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  Phase     Phase
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Dechet {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+enum Phase {
+  ENVELOPPEUSE
+  COS
+  SOUDURE_BAC_COUVERCLE
+  SOUDURE_CONNEXIONS
+}
+
+enum Poste {
+  MATIN
+  APRES_MIDI
+  NUIT
 }
