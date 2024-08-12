@@ -1,5 +1,5 @@
 variables:
-    DOCKER_IMAGE: aracompany1455/arames:of
+    DOCKER_IMAGE: aracompany1455/fabcom/auth:v1.0
 
 stages:
     - test
@@ -8,10 +8,8 @@ stages:
 
 testing:
     stage: test
-    image: node:16
+    image: node:lts
     before_script:
-        - mv .env.template .env
-        - npm set registry http://$IPADDRESS:$NPM_PORT
         - npm ci
     script:
         - npm run test
@@ -23,10 +21,8 @@ testing:
 
 linting:
     stage: lint
-    image: node:16
+    image: node:lts
     before_script:
-        - mv .env.template .env
-        - npm set registry http://$IPADDRESS:$NPM_PORT
         - npm ci
     script:
         - npm run lint
@@ -37,17 +33,17 @@ linting:
           allow_failure: true
 
 building:
+    image: docker:27-dind
     stage: build
-    image: docker:23.0.1-dind
     services:
-        - docker:23.0.1-dind
+        - docker:27-dind
     variables:
         DOCKER_TLS_CERTDIR: ''
         DOCKER_HOST: 'tcp://docker:2375'
-    before_script:
-        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+        IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
     script:
-        - docker build -t "$DOCKER_IMAGE" .
-        - docker push "$DOCKER_IMAGE"
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - docker build -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
     rules:
         - if: '$CI_COMMIT_BRANCH == "master"'
