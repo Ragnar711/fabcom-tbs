@@ -2,10 +2,9 @@ FROM node:lts as ts-compiler
 
 WORKDIR /app
 
-COPY package*.json ./
-COPY tsconfig.json ./
+COPY package*.json tsconfig.json .env ./
+
 COPY prisma ./prisma
-COPY .env ./
 
 RUN apt-get -qy update && apt-get -qy install openssl
 
@@ -24,6 +23,7 @@ FROM node:lts
 WORKDIR /app
 
 COPY --from=ts-compiler /app ./
+
 COPY .env ./
 
 CMD ["npm", "run", "start"]

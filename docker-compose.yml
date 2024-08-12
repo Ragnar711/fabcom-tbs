@@ -21,10 +21,11 @@ services:
         environment:
             NODE_ENV: 'production'
             PORT: '3000'
-            DATABASE_URL: 'mysql://user:password@db/fabcom'
+            DATABASE_URL: 'mysql://root:password@db/fabcom'
             JWT_SECRET: 'secret'
         ports:
             - '127.0.0.1:3000:3000'
         depends_on:
             db:
                 condition: service_healthy
+        entrypoint: ['/bin/sh', '-c', 'npx prisma migrate deploy && npm start']
