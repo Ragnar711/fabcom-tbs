@@ -1,7 +1,3 @@
 import { PrismaClient } from '@prisma/client';
 
-const prismaClientSingleton = () => {
-    return new PrismaClient();
-}
-
-export const prisma = new prismaClientSingleton();
+export const prisma = new PrismaClient();
