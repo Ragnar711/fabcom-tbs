@@ -6,6 +6,11 @@ type PDechet = {
     quantite: number;
 };
 
+// type PArret = {
+//     cause: string;
+//     duree: number;
+// };
+
 type MachineData = {
     KPIs: {
         TD: number;
@@ -27,6 +32,7 @@ type MachineData = {
         QNC4: number;
     };
     paretoDechet: PDechet[];
+    // paretoArret: PArret[];
 };
 
 export const machine = async (req: Request, res: Response) => {
