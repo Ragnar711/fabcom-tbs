@@ -9,24 +9,27 @@ datasource db {
 }
 
 model Historique {
-  Id      Int      @id @default(autoincrement())
-  Date    DateTime @default(now())
-  Poste   Poste
-  Of      String?
-  QP      Int      @default(0)
-  TQ      Float    @default(0)
-  TP      Float    @default(0)
-  TD      Float    @default(0)
-  TR      Float    @default(0)
-  TQ_AVG  Float    @default(0)
-  TP_AVG  Float    @default(0)
-  TD_AVG  Float    @default(0)
-  TR_AVG  Float    @default(0)
-  TQ_D    Int      @default(1)
-  TP_D    Int      @default(1)
-  TD_D    Int      @default(1)
-  TR_D    Int      @default(1)
-  Cadence Float
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  QP        Int      @default(0)
+  TQ        Float    @default(0)
+  TP        Float    @default(0)
+  TD        Float    @default(0)
+  TR        Float    @default(0)
+  TDech     Float    @default(0)
+  TQ_AVG    Float    @default(0)
+  TP_AVG    Float    @default(0)
+  TD_AVG    Float    @default(0)
+  TR_AVG    Float    @default(0)
+  TDech_AVG Float    @default(0)
+  TQ_D      Int      @default(1)
+  TP_D      Int      @default(1)
+  TD_D      Int      @default(1)
+  TR_D      Int      @default(1)
+  TDech_D   Int      @default(1)
+  Cadence   Float
 }
 
 model Arret {
