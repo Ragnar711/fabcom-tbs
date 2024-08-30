@@ -1,15 +1,19 @@
 import { Request, Response } from 'express';
 import { prisma } from '../prismaClient';
+import { secondsBetweenDates } from '../utils/dates';
+import { Arret } from '@prisma/client';
 
 type PDechet = {
     type: string;
     quantite: number;
 };
 
-// type PArret = {
-//     cause: string;
-//     duree: number;
-// };
+type PArret = {
+    cause: string;
+    duree: number;
+};
+
+type ArretWithDuree = Arret & { Duree: number };
 
 type MachineData = {
     KPIs: {
@@ -32,7 +36,7 @@ type MachineData = {
         QNC4: number;
     };
     paretoDechet: PDechet[];
-    // paretoArret: PArret[];
+    paretoArret: PArret[];
 };
 
 export const machine = async (req: Request, res: Response) => {
@@ -108,6 +112,43 @@ export const machine = async (req: Request, res: Response) => {
     const QNC3 = NC3.reduce((acc, cur) => acc + cur.Quantite, 0);
     const QNC4 = NC4.reduce((acc, cur) => acc + cur.Quantite, 0);
 
+    async function getArretWithDuree(): Promise<ArretWithDuree[]> {
+        const arrets = await prisma.arret.findMany({
+            where: {
+                Date_Debut: {
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+                },
+            },
+        });
+        return arrets.map((arret) => ({
+            ...arret,
+            Duree: secondsBetweenDates(
+                arret.Date_Debut,
+                arret.Date_Fin ?? new Date()
+            ),
+        }));
+    }
+
+    async function getParetoArret(): Promise<
+        { cause: string; duree: number }[]
+    > {
+        const arrets = await getArretWithDuree();
+        const groupedByCause = arrets.reduce((acc, arret) => {
+            const cause = arret.Cause ?? '';
+            if (!acc[cause]) {
+                acc[cause] = 0;
+            }
+            acc[cause] += arret.Duree;
+            return acc;
+        }, {} as Record<string, number>);
+
+        const paretoArret = Object.entries(groupedByCause)
+            .map(([cause, duree]) => ({ cause, duree }))
+            .sort((a, b) => b.duree - a.duree);
+
+        return paretoArret;
+    }
+
     const data: MachineData = {
         KPIs: {
             TD: historique?.TD ?? 0,
@@ -129,6 +170,7 @@ export const machine = async (req: Request, res: Response) => {
             QNC4,
         },
         paretoDechet,
+        paretoArret: await getParetoArret(),
     };
 
     res.status(200).json(data);

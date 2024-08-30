@@ -25,15 +25,33 @@ async function seedHistorique() {
 }
 
 async function seedArret() {
-    await prisma.arret.create({
-        data: {
-            Date_Debut: new Date(),
-            Date_Fin: null,
-            Poste: 'APRES_MIDI',
-            Of: 'OF123',
-            Cause: 'Maintenance',
-            Operateur: 'John Doe',
-        },
+    await prisma.arret.createMany({
+        data: [
+            {
+                Date_Debut: new Date(),
+                Date_Fin: null,
+                Poste: 'APRES_MIDI',
+                Of: 'OF123',
+                Cause: 'Panne',
+                Operateur: 'John Doe',
+            },
+            {
+                Date_Debut: '2022-01-01T00:00:00.000Z',
+                Date_Fin: '2022-01-01T04:00:00.000Z',
+                Poste: 'MATIN',
+                Of: 'OF123',
+                Cause: 'Maintenance',
+                Operateur: 'John Doe',
+            },
+            {
+                Date_Debut: '2022-01-01T12:00:00.000Z',
+                Date_Fin: '2022-01-01T16:00:00.000Z',
+                Poste: 'APRES_MIDI',
+                Of: 'OF123',
+                Cause: 'Panne',
+                Operateur: 'John Doe',
+            },
+        ],
     });
 }
 
@@ -130,6 +148,11 @@ async function seedDechet() {
 
 async function main() {
     try {
+        await prisma.historique.deleteMany();
+        await prisma.arret.deleteMany();
+        await prisma.ordreFabrication.deleteMany();
+        await prisma.nonConforme.deleteMany();
+        await prisma.dechet.deleteMany();
         await seedHistorique();
         await seedArret();
         await seedOrdreFabrication();
