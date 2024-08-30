@@ -12,6 +12,7 @@ type MachineData = {
         TQ: number;
         TR: number;
         TDech: number;
+        TRS: number;
     };
     OF: {
         NOF: string;
@@ -25,8 +26,8 @@ type MachineData = {
         QNC3: number;
         QNC4: number;
     };
-    paretoDechet: { type: string; quantite: number }[];
-    paretoArret: { cause: string; duree: number }[];
+    paretoDechet: { name: string; uv: number }[];
+    paretoArret: { name: string; uv: number }[];
     historiqueKPIs: {
         Date: string;
         TDech: number;
@@ -50,6 +51,11 @@ export const machine = async (req: Request, res: Response) => {
         },
     });
 
+    const TRS =
+        ((historique?.TD ?? 0) *
+            (historique?.TP ?? 0) *
+            (historique?.TQ ?? 0)) /
+        10000;
     const QP = historique?.Of === of?.Numero ? historique?.QP : 0;
     const { paretoDechet } = await getDechetPareto(of?.Numero);
     const { QNC1, QNC2, QNC3, QNC4 } = await getQNCs(of?.Numero);
@@ -61,6 +67,7 @@ export const machine = async (req: Request, res: Response) => {
             TQ: historique?.TQ ?? 0,
             TR: historique?.TR ?? 0,
             TDech: historique?.TDech ?? 0,
+            TRS,
         },
         OF: {
             NOF: of?.Numero ?? "Pas d'OF en cours",

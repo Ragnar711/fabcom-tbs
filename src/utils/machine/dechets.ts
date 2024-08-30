@@ -1,7 +1,7 @@
 import { prisma } from '../../prismaClient';
 
 export async function getDechetPareto(ofNumero: string = ''): Promise<{
-    paretoDechet: { type: string; quantite: number }[];
+    paretoDechet: { name: string; uv: number }[];
 }> {
     const dechets = await prisma.dechet.groupBy({
         by: ['Type'],
@@ -19,8 +19,8 @@ export async function getDechetPareto(ofNumero: string = ''): Promise<{
     });
 
     const paretoDechet = dechets.map((dechet) => ({
-        type: dechet.Type,
-        quantite: dechet._sum.Quantite ?? 0,
+        name: dechet.Type,
+        uv: dechet._sum.Quantite ?? 0,
     }));
 
     return { paretoDechet };

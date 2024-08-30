@@ -12,7 +12,7 @@ function secondsBetweenDates(
 }
 
 export async function getParetoArret(): Promise<
-    { cause: string; duree: number }[]
+    { name: string; uv: number }[]
 > {
     const arrets = await prisma.arret.findMany({
         where: {
@@ -38,8 +38,8 @@ export async function getParetoArret(): Promise<
     }, {} as Record<string, number>);
 
     const paretoArret = Object.entries(groupedByCause)
-        .map(([cause, duree]) => ({ cause, duree }))
-        .sort((a, b) => b.duree - a.duree);
+        .map(([name, uv]) => ({ name, uv }))
+        .sort((a, b) => b.uv - a.uv);
 
     return paretoArret;
 }
