@@ -4,6 +4,7 @@ import { getParetoArret } from '../utils/machine/arret';
 import { getDechetPareto } from '../utils/machine/dechets';
 import { getQNCs } from '../utils/machine/nc';
 import { getKPIsChart } from '../utils/machine/kpi';
+import { secondsBetweenDates } from '../utils/utils';
 
 type MachineData = {
     KPIs: {
@@ -36,6 +37,18 @@ type MachineData = {
         TQ: number;
         TD: number;
     }[];
+    lastDechet: {
+        cause: string;
+        quantite: number;
+    };
+    lastNC: {
+        cause: string;
+        quantite: number;
+    };
+    lastArret: {
+        cause: string;
+        duree: number;
+    };
 };
 
 export const machine = async (req: Request, res: Response) => {
@@ -59,6 +72,24 @@ export const machine = async (req: Request, res: Response) => {
     const QP = historique?.Of === of?.Numero ? historique?.QP : 0;
     const { paretoDechet } = await getDechetPareto(of?.Numero);
     const { QNC1, QNC2, QNC3, QNC4 } = await getQNCs(of?.Numero);
+
+    const lastDechet = await prisma.dechet.findFirst({
+        orderBy: {
+            Date: 'desc',
+        },
+    });
+
+    const lastNC = await prisma.nonConforme.findFirst({
+        orderBy: {
+            Date: 'desc',
+        },
+    });
+
+    const lastArret = await prisma.arret.findFirst({
+        orderBy: {
+            Date_Debut: 'desc',
+        },
+    });
 
     const data: MachineData = {
         KPIs: {
@@ -84,6 +115,21 @@ export const machine = async (req: Request, res: Response) => {
         paretoDechet,
         paretoArret: await getParetoArret(),
         historiqueKPIs: await getKPIsChart(),
+        lastDechet: {
+            cause: lastDechet?.Type ?? '-',
+            quantite: lastDechet?.Quantite ?? 0,
+        },
+        lastNC: {
+            cause: lastNC?.Type ?? '-',
+            quantite: lastNC?.Quantite ?? 0,
+        },
+        lastArret: {
+            cause: lastArret?.Cause ?? '-',
+            duree: secondsBetweenDates(
+                lastArret?.Date_Debut ?? new Date(),
+                lastArret?.Date_Fin ?? new Date()
+            ),
+        },
     };
 
     res.status(200).json(data);
