@@ -20,6 +20,7 @@ type MachineData = {
         Article: string;
         QO: number;
         QP: number;
+        QD: number;
     };
     NC: {
         QNC1: number;
@@ -70,6 +71,16 @@ export const machine = async (req: Request, res: Response) => {
             (historique?.TQ ?? 0)) /
         10000;
     const QP = historique?.Of === of?.Numero ? historique?.QP : 0;
+    const QD = await prisma.dechet.aggregate({
+        _sum: {
+            Quantite: true,
+        },
+        where: {
+            Of: of?.Numero,
+        },
+    });
+
+    const totalQuantity = QD._sum.Quantite;
     const { paretoDechet } = await getDechetPareto(of?.Numero);
     const { QNC1, QNC2, QNC3, QNC4 } = await getQNCs(of?.Numero);
 
@@ -105,6 +116,7 @@ export const machine = async (req: Request, res: Response) => {
             Article: of?.Article ?? '-',
             QO: of?.Quantite_Objectif ?? 0,
             QP: QP ?? 0,
+            QD: totalQuantity ?? 0,
         },
         NC: {
             QNC1,
