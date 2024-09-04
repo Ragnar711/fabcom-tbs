@@ -3,7 +3,8 @@ import { prisma } from '../../prismaClient';
 export async function getDechetPareto(ofNumero: string = ''): Promise<{
     paretoDechet: { name: string; uv: number }[];
 }> {
-    const dechets = await prisma.dechet.groupBy({
+    const dechets = [];
+    const dechet_phase1 = await prisma.dechet_phase1.groupBy({
         by: ['Type'],
         where: {
             Of: ofNumero,
@@ -17,6 +18,58 @@ export async function getDechetPareto(ofNumero: string = ''): Promise<{
             },
         },
     });
+
+    const dechet_phase2 = await prisma.dechet_phase2.groupBy({
+        by: ['Type'],
+        where: {
+            Of: ofNumero,
+        },
+        _sum: {
+            Quantite: true,
+        },
+        orderBy: {
+            _sum: {
+                Quantite: 'desc',
+            },
+        },
+    });
+
+    const dechet_phase3 = await prisma.dechet_phase3.groupBy({
+        by: ['Type'],
+        where: {
+            Of: ofNumero,
+        },
+        _sum: {
+            Quantite: true,
+        },
+        orderBy: {
+            _sum: {
+                Quantite: 'desc',
+            },
+        },
+    });
+
+    const dechet_phase4 = await prisma.dechet_phase4.groupBy({
+        by: ['Type'],
+        where: {
+            Of: ofNumero,
+        },
+        _sum: {
+            Quantite: true,
+        },
+        orderBy: {
+            _sum: {
+                Quantite: 'desc',
+            },
+        },
+    });
+
+    dechets.push(
+        ...dechet_phase1,
+        ...dechet_phase2,
+        ...dechet_phase3,
+        ...dechet_phase4
+    );
 
     const paretoDechet = dechets.map((dechet) => ({
         name: dechet.Type,

@@ -4,13 +4,42 @@ import { secondsBetweenDates } from '../utils';
 export async function getParetoArret(): Promise<
     { name: string; uv: number }[]
 > {
-    const arrets = await prisma.arret.findMany({
+    const arrets = [];
+
+    const arrets_phase1 = await prisma.arret_phase1.findMany({
         where: {
             Date_Debut: {
                 gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
             },
         },
     });
+    const arrets_phase2 = await prisma.arret_phase2.findMany({
+        where: {
+            Date_Debut: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            },
+        },
+    });
+    const arrets_phase3 = await prisma.arret_phase3.findMany({
+        where: {
+            Date_Debut: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            },
+        },
+    });
+    const arrets_phase4 = await prisma.arret_phase4.findMany({
+        where: {
+            Date_Debut: {
+                gte: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            },
+        },
+    });
+    arrets.push(
+        ...arrets_phase1,
+        ...arrets_phase2,
+        ...arrets_phase3,
+        ...arrets_phase4
+    );
     const arretsWithDuree = arrets.map((arret) => ({
         ...arret,
         Duree: secondsBetweenDates(
