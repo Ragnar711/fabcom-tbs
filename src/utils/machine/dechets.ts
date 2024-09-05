@@ -71,10 +71,20 @@ export async function getDechetPareto(ofNumero: string = ''): Promise<{
         ...dechet_phase4
     );
 
-    const paretoDechet = dechets.map((dechet) => ({
-        name: dechet.Type,
-        uv: dechet._sum.Quantite ?? 0,
-    }));
+    const dechetMap = new Map<string, number>();
+
+    dechets.forEach((dechet) => {
+        const currentQuantity = dechetMap.get(dechet.Type) ?? 0;
+        dechetMap.set(
+            dechet.Type,
+            currentQuantity + (dechet._sum.Quantite ?? 0)
+        );
+    });
+
+    const paretoDechet = Array.from(dechetMap, ([name, uv]) => ({
+        name,
+        uv,
+    })).sort((a, b) => b.uv - a.uv);
 
     return { paretoDechet };
 }
