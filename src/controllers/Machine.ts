@@ -68,11 +68,21 @@ type MachineData = {
         duree: number;
     };
     historique: {
-        Date: string;
-        NOF: string | null;
+        key: number;
+        'Post/heure': string;
+        'N°OF': string | null;
         TRS: number;
-        QP: number;
-        QNC: number;
+        'Qté Prod OK': number;
+        'Qté NC': number;
+        Arrêts: string;
+        'Ref. Plaque': string;
+        'Cons. Plaque': number;
+        'Ref. Enveloppe': string;
+        'Cons. Enveloppe': number;
+        'Ref. Bac': string;
+        'Cons. Bac': number;
+        'Ref. Couvercle': string;
+        'Cons. Couvercle': number;
     }[];
 };
 
@@ -348,17 +358,29 @@ export const machine = async (req: Request, res: Response) => {
             }
         });
 
-        const result = Object.entries(groupedData).map(([key, value]) => ({
-            Date: key,
-            NOF: value.NOF,
-            QP: value.QP - value.QNC - value.QD,
-            TRS:
-                ((value.TD / value.count) *
-                    (value.TP / value.count) *
-                    (value.TQ / value.count)) /
-                10000,
-            QNC: value.QNC ?? 0,
-        }));
+        const result = Object.entries(groupedData).map(
+            ([key, value], index) => ({
+                key: index + 1,
+                'Post/heure': key,
+                'N°OF': value.NOF,
+                'Qté Prod OK': value.QP - value.QNC - value.QD,
+                TRS:
+                    ((value.TD / value.count) *
+                        (value.TP / value.count) *
+                        (value.TQ / value.count)) /
+                    10000,
+                'Qté NC': value.QNC ?? 0,
+                Arrêts: '00:00:00',
+                'Ref. Plaque': '-',
+                'Cons. Plaque': 0,
+                'Ref. Enveloppe': '-',
+                'Cons. Enveloppe': 0,
+                'Ref. Bac': '-',
+                'Cons. Bac': 0,
+                'Ref. Couvercle': '-',
+                'Cons. Couvercle': 0,
+            })
+        );
 
         const data: MachineData = {
             KPIs: {
