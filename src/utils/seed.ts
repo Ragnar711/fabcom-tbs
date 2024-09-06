@@ -465,8 +465,8 @@ async function seedHistorique() {
 type Poste = 'MATIN' | 'APRES_MIDI' | 'NUIT';
 
 async function seedArret() {
-    const start = new Date('2024-09-04T00:00:00.000Z');
-    const end = new Date('2024-09-05T00:00:00.000Z');
+    const start = new Date('2024-09-05T00:00:00.000Z');
+    const end = new Date('2024-09-06T00:00:00.000Z');
     const randomDate = (start: Date, end: Date) => {
         const randomTime = Math.floor(
             Math.random() * (end.getTime() - start.getTime())

@@ -6,6 +6,7 @@ import {
     differenceInWeeks,
     differenceInMonths,
 } from 'date-fns';
+import { secondsBetweenDates } from '../utils/utils';
 
 interface GroupedData {
     [key: string]: {
@@ -16,6 +17,11 @@ interface GroupedData {
         NOF: string | null;
         count: number;
     };
+}
+
+interface ArretData {
+    Motif: string;
+    Durée: number;
 }
 
 export const management = async (req: Request, res: Response) => {
@@ -47,6 +53,10 @@ export const management = async (req: Request, res: Response) => {
         historique_phase2,
         historique_phase3,
         historique_phase4,
+        arret_phase1,
+        arret_phase2,
+        arret_phase3,
+        arret_phase4,
     ] = await Promise.all([
         prisma.historique_phase1.findMany({
             orderBy: { Date: 'desc' },
@@ -64,6 +74,18 @@ export const management = async (req: Request, res: Response) => {
             orderBy: { Date: 'desc' },
             where: { Date: { gte: from, lte: to } },
         }),
+        prisma.arret_phase1.findMany({
+            where: { Date_Debut: { gte: from, lte: to } },
+        }),
+        prisma.arret_phase2.findMany({
+            where: { Date_Debut: { gte: from, lte: to } },
+        }),
+        prisma.arret_phase3.findMany({
+            where: { Date_Debut: { gte: from, lte: to } },
+        }),
+        prisma.arret_phase4.findMany({
+            where: { Date_Debut: { gte: from, lte: to } },
+        }),
     ]);
 
     const historique = [
@@ -72,6 +94,35 @@ export const management = async (req: Request, res: Response) => {
         ...historique_phase3,
         ...historique_phase4,
     ];
+
+    const arret = [
+        ...arret_phase1,
+        ...arret_phase2,
+        ...arret_phase3,
+        ...arret_phase4,
+    ];
+
+    const arretDataMap: { [key: string]: number } = {};
+
+    arret.forEach((item) => {
+        const Durée = secondsBetweenDates(
+            item.Date_Debut,
+            item.Date_Fin ?? new Date()
+        );
+        const Motif = item.Cause ?? '';
+
+        if (!arretDataMap[Motif]) {
+            arretDataMap[Motif] = 0;
+        }
+
+        arretDataMap[Motif] += Durée;
+    });
+
+    const arretData: ArretData[] = Object.entries(arretDataMap).map(
+        ([Motif, Durée]) => ({ Motif, Durée })
+    );
+
+    const sortedArretData = arretData.sort((a, b) => b.Durée - a.Durée);
 
     const groupedData: GroupedData = historique.reduce(
         (acc: GroupedData, row) => {
@@ -135,7 +186,7 @@ export const management = async (req: Request, res: Response) => {
             10000,
     }));
 
-    const data = { kpi: result };
+    const data = { kpi: result, arret: { chart: sortedArretData } };
 
     res.json(data);
 };
