@@ -24,6 +24,16 @@ interface ArretData {
     Durée: number;
 }
 
+interface NCData {
+    Motif: string;
+    Quantité: number;
+}
+
+interface DechetData {
+    Motif: string;
+    Quantité: number;
+}
+
 export const management = async (req: Request, res: Response) => {
     const { from, to } = req.params;
     const fromDate = new Date(from);
@@ -57,6 +67,14 @@ export const management = async (req: Request, res: Response) => {
         arret_phase2,
         arret_phase3,
         arret_phase4,
+        nonConforme_phase1,
+        nonConforme_phase2,
+        nonConforme_phase3,
+        nonConforme_phase4,
+        dechet_phase1,
+        dechet_phase2,
+        dechet_phase3,
+        dechet_phase4,
     ] = await Promise.all([
         prisma.historique_phase1.findMany({
             orderBy: { Date: 'desc' },
@@ -76,15 +94,51 @@ export const management = async (req: Request, res: Response) => {
         }),
         prisma.arret_phase1.findMany({
             where: { Date_Debut: { gte: from, lte: to } },
+            orderBy: { Date_Debut: 'desc' },
         }),
         prisma.arret_phase2.findMany({
             where: { Date_Debut: { gte: from, lte: to } },
+            orderBy: { Date_Debut: 'desc' },
         }),
         prisma.arret_phase3.findMany({
             where: { Date_Debut: { gte: from, lte: to } },
+            orderBy: { Date_Debut: 'desc' },
         }),
         prisma.arret_phase4.findMany({
             where: { Date_Debut: { gte: from, lte: to } },
+            orderBy: { Date_Debut: 'desc' },
+        }),
+        prisma.nonConforme_phase1.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.nonConforme_phase2.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.nonConforme_phase3.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.nonConforme_phase4.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.dechet_phase1.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.dechet_phase2.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.dechet_phase3.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
+        }),
+        prisma.dechet_phase4.findMany({
+            where: { Date: { gte: from, lte: to } },
+            orderBy: { Date: 'desc' },
         }),
     ]);
 
@@ -102,7 +156,23 @@ export const management = async (req: Request, res: Response) => {
         ...arret_phase4,
     ];
 
+    const nc = [
+        ...nonConforme_phase1,
+        ...nonConforme_phase2,
+        ...nonConforme_phase3,
+        ...nonConforme_phase4,
+    ];
+
+    const dechet = [
+        ...dechet_phase1,
+        ...dechet_phase2,
+        ...dechet_phase3,
+        ...dechet_phase4,
+    ];
+
     const arretDataMap: { [key: string]: number } = {};
+    const ncDataMap: { [key: string]: number } = {};
+    const dechetDataMap: { [key: string]: number } = {};
 
     arret.forEach((item) => {
         const Durée = secondsBetweenDates(
@@ -118,11 +188,43 @@ export const management = async (req: Request, res: Response) => {
         arretDataMap[Motif] += Durée;
     });
 
+    nc.forEach((item) => {
+        const Quantité = item.Quantite;
+        const Motif = item.Type ?? '';
+
+        if (!ncDataMap[Motif]) {
+            ncDataMap[Motif] = 0;
+        }
+
+        ncDataMap[Motif] += Quantité;
+    });
+
+    dechet.forEach((item) => {
+        const Quantité = item.Quantite;
+        const Motif = item.Type ?? '';
+
+        if (!dechetDataMap[Motif]) {
+            dechetDataMap[Motif] = 0;
+        }
+
+        dechetDataMap[Motif] += Quantité;
+    });
+
     const arretData: ArretData[] = Object.entries(arretDataMap).map(
         ([Motif, Durée]) => ({ Motif, Durée })
     );
 
+    const ncData: NCData[] = Object.entries(ncDataMap).map(
+        ([Motif, Quantité]) => ({ Motif, Quantité })
+    );
+
+    const dechetData: DechetData[] = Object.entries(dechetDataMap).map(
+        ([Motif, Quantité]) => ({ Motif, Quantité })
+    );
+
     const sortedArretData = arretData.sort((a, b) => b.Durée - a.Durée);
+    const sortedNcData = ncData.sort((a, b) => b.Quantité - a.Quantité);
+    const sortedDechetData = dechetData.sort((a, b) => b.Quantité - a.Quantité);
 
     const groupedData: GroupedData = historique.reduce(
         (acc: GroupedData, row) => {
@@ -186,7 +288,12 @@ export const management = async (req: Request, res: Response) => {
             10000,
     }));
 
-    const data = { kpi: result, arret: { chart: sortedArretData } };
+    const data = {
+        kpi: result,
+        arret: { chart: sortedArretData },
+        nc: { chart: sortedNcData },
+        dechet: { chart: sortedDechetData },
+    };
 
     res.json(data);
 };
