@@ -39,6 +39,12 @@ type MachineData = {
         QP: number;
         QD: number;
     };
+    QP: {
+        QP1: number;
+        QP2: number;
+        QP3: number;
+        QP4: number;
+    };
     NC: {
         QNC1: number;
         QNC2: number;
@@ -422,6 +428,12 @@ export const machine = async (req: Request, res: Response) => {
                 QO: of?.Quantite_Objectif ?? 0,
                 QP: QP ?? 0,
                 QD: totalQuantity ?? 0,
+            },
+            QP: {
+                QP1: historique_phase1[0]?.QP ?? 0,
+                QP2: historique_phase2[0]?.QP ?? 0,
+                QP3: historique_phase3[0]?.QP ?? 0,
+                QP4: historique_phase4[0]?.QP ?? 0,
             },
             NC: {
                 QNC1: QNC1._sum.Quantite ?? 0,
