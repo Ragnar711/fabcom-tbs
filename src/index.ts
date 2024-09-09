@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import compression from 'compression';
 import dotenv from 'dotenv';
-import routes from './routes/route';
+import routes from './routes/routes';
 
 dotenv.config();
 
