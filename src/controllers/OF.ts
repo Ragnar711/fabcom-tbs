@@ -17,6 +17,9 @@ export const addOf = async (req: Request, res: Response) => {
     await prisma.ordreFabrication.updateMany({
         where: {
             Of_Prod: true,
+            NOT: {
+                Numero: of.Numero,
+            },
         },
         data: {
             Of_Prod: false,
