@@ -9,7 +9,7 @@ services:
             MYSQL_PASSWORD: 'password'
             MYSQL_ROOT_PASSWORD: 'password'
         ports:
-            - '127.0.0.1:3306:3306'
+            - '127.0.0.1:3307:3306'
         volumes:
             - ./tbs_data:/var/lib/mysql
         healthcheck:
@@ -23,7 +23,7 @@ services:
         environment:
             NODE_ENV: 'production'
             PORT: '3001'
-            DATABASE_URL: 'mysql://root:password@tbs_db/tbs'
+            DATABASE_URL: 'mysql://root:password@db/tbs'
         ports:
             - '127.0.0.1:3001:3001'
         depends_on:
