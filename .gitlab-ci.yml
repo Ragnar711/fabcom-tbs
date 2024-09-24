@@ -1,3 +1,6 @@
+variables:
+    DOCKER_IMAGE: aracompany1455/fabcom/tbs:v1.0
+
 stages:
     - test
     - lint
