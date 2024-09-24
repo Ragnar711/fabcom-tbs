@@ -11,11 +11,11 @@ services:
         ports:
             - '127.0.0.1:3307:3306'
         volumes:
-            - ./db_data:/var/lib/mysql
+            - ./tbs_data:/var/lib/mysql
         healthcheck:
             test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
             timeout: 20s
             retries: 10
 
 volumes:
-    db_data:
+    tbs_data:
