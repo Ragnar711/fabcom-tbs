@@ -1,4 +1,4 @@
-FROM node:lts as ts-compiler
+FROM node:lts AS ts-compiler
 
 WORKDIR /app
 

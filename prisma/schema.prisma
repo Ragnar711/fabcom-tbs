@@ -8,25 +8,133 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Historique {
-  Id      Int      @id @default(autoincrement())
-  Date    DateTime @default(now())
-  Poste   Poste
-  Of      String?
-  QP      Int      @default(0)
-  TQ      Float    @default(0)
-  TP      Float    @default(0)
-  TD      Float    @default(0)
-  TQ_AVG  Float    @default(0)
-  TP_AVG  Float    @default(0)
-  TD_AVG  Float    @default(0)
-  TQ_D    Int      @default(1)
-  TP_D    Int      @default(1)
-  TD_D    Int      @default(1)
-  Cadence Float
+model Historique_phase1 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  QP        Int      @default(0)
+  TQ        Float    @default(0)
+  TP        Float    @default(0)
+  TD        Float    @default(0)
+  TR        Float    @default(0)
+  TDech     Float    @default(0)
+  TQ_AVG    Float    @default(0)
+  TP_AVG    Float    @default(0)
+  TD_AVG    Float    @default(0)
+  TR_AVG    Float    @default(0)
+  TDech_AVG Float    @default(0)
+  TQ_D      Int      @default(1)
+  TP_D      Int      @default(1)
+  TD_D      Int      @default(1)
+  TR_D      Int      @default(1)
+  TDech_D   Int      @default(1)
+  Cadence   Float
 }
 
-model Arret {
+model Historique_phase2 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  QP        Int      @default(0)
+  TQ        Float    @default(0)
+  TP        Float    @default(0)
+  TD        Float    @default(0)
+  TR        Float    @default(0)
+  TDech     Float    @default(0)
+  TQ_AVG    Float    @default(0)
+  TP_AVG    Float    @default(0)
+  TD_AVG    Float    @default(0)
+  TR_AVG    Float    @default(0)
+  TDech_AVG Float    @default(0)
+  TQ_D      Int      @default(1)
+  TP_D      Int      @default(1)
+  TD_D      Int      @default(1)
+  TR_D      Int      @default(1)
+  TDech_D   Int      @default(1)
+  Cadence   Float
+}
+
+model Historique_phase3 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  QP        Int      @default(0)
+  TQ        Float    @default(0)
+  TP        Float    @default(0)
+  TD        Float    @default(0)
+  TR        Float    @default(0)
+  TDech     Float    @default(0)
+  TQ_AVG    Float    @default(0)
+  TP_AVG    Float    @default(0)
+  TD_AVG    Float    @default(0)
+  TR_AVG    Float    @default(0)
+  TDech_AVG Float    @default(0)
+  TQ_D      Int      @default(1)
+  TP_D      Int      @default(1)
+  TD_D      Int      @default(1)
+  TR_D      Int      @default(1)
+  TDech_D   Int      @default(1)
+  Cadence   Float
+}
+
+model Historique_phase4 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  QP        Int      @default(0)
+  TQ        Float    @default(0)
+  TP        Float    @default(0)
+  TD        Float    @default(0)
+  TR        Float    @default(0)
+  TDech     Float    @default(0)
+  TQ_AVG    Float    @default(0)
+  TP_AVG    Float    @default(0)
+  TD_AVG    Float    @default(0)
+  TR_AVG    Float    @default(0)
+  TDech_AVG Float    @default(0)
+  TQ_D      Int      @default(1)
+  TP_D      Int      @default(1)
+  TD_D      Int      @default(1)
+  TR_D      Int      @default(1)
+  TDech_D   Int      @default(1)
+  Cadence   Float
+}
+
+model Arret_phase1 {
+  Id         Int       @id @default(autoincrement())
+  Date_Debut DateTime  @default(now())
+  Date_Fin   DateTime?
+  Poste      Poste
+  Of         String?
+  Cause      String?
+  Operateur  String?
+}
+
+model Arret_phase2 {
+  Id         Int       @id @default(autoincrement())
+  Date_Debut DateTime  @default(now())
+  Date_Fin   DateTime?
+  Poste      Poste
+  Of         String?
+  Cause      String?
+  Operateur  String?
+}
+
+model Arret_phase3 {
+  Id         Int       @id @default(autoincrement())
+  Date_Debut DateTime  @default(now())
+  Date_Fin   DateTime?
+  Poste      Poste
+  Of         String?
+  Cause      String?
+  Operateur  String?
+}
+
+model Arret_phase4 {
   Id         Int       @id @default(autoincrement())
   Date_Debut DateTime  @default(now())
   Date_Fin   DateTime?
@@ -47,20 +155,7 @@ model OrdreFabrication {
   updatedAt         DateTime @default(now())
 }
 
-model NonConforme {
-  Id        Int      @id @default(autoincrement())
-  Date      DateTime @default(now())
-  Poste     Poste
-  Of        String?
-  Operateur String?
-  Quantite  Int      @default(0)
-  Type      String
-  Phase     Phase
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-}
-
-model Dechet {
+model NonConforme_phase1 {
   Id        Int      @id @default(autoincrement())
   Date      DateTime @default(now())
   Poste     Poste
@@ -72,11 +167,88 @@ model Dechet {
   updatedAt DateTime @default(now())
 }
 
-enum Phase {
-  ENVELOPPEUSE
-  COS
-  SOUDURE_BAC_COUVERCLE
-  SOUDURE_CONNEXIONS
+model NonConforme_phase2 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model NonConforme_phase3 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model NonConforme_phase4 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Dechet_phase1 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Dechet_phase2 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Dechet_phase3 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Dechet_phase4 {
+  Id        Int      @id @default(autoincrement())
+  Date      DateTime @default(now())
+  Poste     Poste
+  Of        String?
+  Operateur String?
+  Quantite  Int      @default(0)
+  Type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
 }
 
 enum Poste {

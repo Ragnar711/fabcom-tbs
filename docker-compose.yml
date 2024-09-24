@@ -9,23 +9,13 @@ services:
             MYSQL_PASSWORD: 'password'
             MYSQL_ROOT_PASSWORD: 'password'
         ports:
-            - '127.0.0.1:3306:3306'
+            - '127.0.0.1:3307:3306'
+        volumes:
+            - ./tbs_data:/var/lib/mysql
         healthcheck:
             test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
             timeout: 20s
             retries: 10
 
-    auth:
-        image: registry.gitlab.com/aracompany/fabcom/tbs:master
-        restart: always
-        environment:
-            NODE_ENV: 'production'
-            PORT: '3000'
-            DATABASE_URL: 'mysql://root:password@db/tbs'
-            JWT_SECRET: 'secret'
-        ports:
-            - '127.0.0.1:3000:3000'
-        depends_on:
-            db:
-                condition: service_healthy
-        entrypoint: ['/bin/sh', '-c', 'npx prisma migrate deploy && npm start']
+volumes:
+    tbs_data:
